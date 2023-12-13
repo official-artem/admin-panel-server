@@ -1,6 +1,7 @@
 import pkg from 'pg';
 const { Client } = pkg;
 import 'dotenv/config';
+import { v4 as uuidv4 } from 'uuid';
 
 const client = new Client({
   host: process.env.DB_HOST,
@@ -28,3 +29,39 @@ export const getById = async (id) => {
 
   return result.rows[0] || null;
 };
+
+export const update = async (id, user) => {
+  const {name, surname, number, country, height, weight} = user;
+
+  await client.query(`
+    UPDATE users
+    SET 
+      name='${name}',
+      surname='${surname}',
+      number='${number}',
+      country='${country}',
+      height='${height}',
+      weight='${weight}'
+    WHERE id = '${id}'
+    `);
+
+  return await getById(id);
+}
+
+export const create = async (
+  name,
+  surname,
+  number,
+  country,
+  height,
+  weight
+) => {
+  const newId = uuidv4();
+
+   await client.query(`
+  INSERT INTO users (id, name, surname, number, country, height, weight)
+  VALUES ('${newId}', '${name}', '${surname}', '${number}', '${country}', '${height}', '${weight}')
+  `)
+
+  return await getById(newId);
+}
