@@ -61,7 +61,7 @@ export const create = async (
    await client.query(`
   INSERT INTO users (id, name, surname, number, country, height, weight)
   VALUES ($1, $2, $3, $4, $5, $6, $7)
-  `, [id, name, surname, number, country, height, weight])
+  `, [generatedId, name, surname, number, country, height, weight])
 
   return await getById(generatedId);
 }
