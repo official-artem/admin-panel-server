@@ -1,20 +1,14 @@
-import pkg from 'pg';
-const { Client } = pkg;
-import 'dotenv/config';
+import cors from 'cors';
+import express from 'express';
+import { router as userRouter } from './routes/user.route.js';
 
+const PORT = process.env.PORT || 3000;
 
-const client = new Client({
-  host: process.env.DB_HOST,
-  port: process.env.DB_PORT,
-  user: process.env.DB_USER,
-  password: process.env.DB_PASSWORD,
-  database: process.env.DB_DATABASE
+const app = express();
+app.use(cors());
+
+app.use('/users', express.json(), userRouter)
+
+app.listen(PORT, () => {
+  console.log(`server is running on http://localhost:${PORT}`);
 })
-
-await client.connect()
-
-const result = await client.query(`
-SELECT * FROM users
-`)
-
-console.log(result.rows);
