@@ -24,8 +24,8 @@ export const getAll = async () => {
 export const getById = async (id) => {
   const result = await client.query(`
     SELECT * FROM users
-    WHERE id = '${id}'
-  `);
+    WHERE id = $1
+  `, [id]);
 
   return result.rows[0] || null;
 };
@@ -36,14 +36,14 @@ export const update = async (id, user) => {
   await client.query(`
     UPDATE users
     SET 
-      name='${name}',
-      surname='${surname}',
-      number='${number}',
-      country='${country}',
-      height='${height}',
-      weight='${weight}'
+      name=$1,
+      surname=$2,
+      number=$3,
+      country=$4,
+      height=$5,
+      weight=$6
     WHERE id = '${id}'
-    `);
+    `, [name, surname, number, country, height, weight]);
 
   return await getById(id);
 }
@@ -56,12 +56,12 @@ export const create = async (
   height,
   weight
 ) => {
-  const newId = uuidv4();
+  const generatedId = uuidv4();
 
    await client.query(`
   INSERT INTO users (id, name, surname, number, country, height, weight)
-  VALUES ('${newId}', '${name}', '${surname}', '${number}', '${country}', '${height}', '${weight}')
-  `)
+  VALUES ($1, $2, $3, $4, $5, $6, $7)
+  `, [id, name, surname, number, country, height, weight])
 
-  return await getById(newId);
+  return await getById(generatedId);
 }
